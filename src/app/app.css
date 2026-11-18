@@ -1,0 +1,56 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem clamp(1rem, 4vw, 3rem);
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.marca {
+  color: inherit;
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+nav a {
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+nav a:hover {
+  background: #1e293b;
+  color: #fff;
+}
+
+nav a.activo {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.contenido {
+  flex: 1;
+  width: min(100% - 2rem, 60rem);
+  margin: 0 auto;
+  padding: 2.5rem 0 3rem;
+}

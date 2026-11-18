@@ -1,0 +1,112 @@
+<section class="encabezado">
+  <h2>Solicitud validada</h2>
+  <p>
+    Complete los cuatro campos. La cantidad debe ser múltiplo de
+    <strong>{{ M }}</strong> y estar entre <strong>1</strong> y <strong>{{ TOPE }}</strong
+    >; el rango de fechas empieza en <strong>{{ DESDE }}</strong> y termina en
+    <strong>{{ HASTA }}</strong>.
+  </p>
+</section>
+
+<form class="tarjeta" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+  <div class="rejilla">
+    <div class="campo">
+      <label for="codigo">Código</label>
+      <input
+        id="codigo"
+        type="text"
+        formControlName="codigo"
+        placeholder="AB123"
+        autocomplete="off"
+        maxlength="5"
+        [attr.aria-invalid]="mostrarError('codigo') && formulario.controls.codigo.invalid"
+        [attr.aria-describedby]="mostrarError('codigo') ? 'codigo-ayuda' : null"
+      />
+      <small id="codigo-ayuda" class="ayuda">Dos letras mayúsculas y tres dígitos.</small>
+
+      @if (mostrarError('codigo') && formulario.controls.codigo.hasError('required')) {
+        <p class="error">El código es obligatorio.</p>
+      }
+      @if (mostrarError('codigo') && formulario.controls.codigo.hasError('pattern')) {
+        <p class="error">El código debe tener dos letras mayúsculas y tres dígitos (AB123).</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="cantidad">Cantidad</label>
+      <input
+        id="cantidad"
+        type="number"
+        formControlName="cantidad"
+        inputmode="numeric"
+        [min]="1"
+        [max]="TOPE"
+        step="1"
+        [attr.aria-invalid]="mostrarError('cantidad') && formulario.controls.cantidad.invalid"
+      />
+      <small class="ayuda">Múltiplo de {{ M }}, entre 1 y {{ TOPE }}.</small>
+
+      @if (mostrarError('cantidad') && formulario.controls.cantidad.hasError('required')) {
+        <p class="error">La cantidad es obligatoria.</p>
+      }
+      @if (mostrarError('cantidad') && formulario.controls.cantidad.hasError('min')) {
+        <p class="error">La cantidad debe ser mayor o igual a 1.</p>
+      }
+      @if (mostrarError('cantidad') && formulario.controls.cantidad.hasError('max')) {
+        <p class="error">La cantidad debe ser menor o igual a {{ TOPE }}.</p>
+      }
+      @if (mostrarError('cantidad') && formulario.controls.cantidad.hasError('multiplo')) {
+        <p class="error">La cantidad debe ser múltiplo de {{ M }}.</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="desde">Desde</label>
+      <input
+        id="desde"
+        type="number"
+        formControlName="desde"
+        inputmode="numeric"
+        step="1"
+        [attr.aria-invalid]="mostrarError('desde') && formulario.controls.desde.invalid"
+      />
+      <small class="ayuda">Día inicial del rango.</small>
+
+      @if (mostrarError('desde') && formulario.controls.desde.hasError('required')) {
+        <p class="error">El valor «desde» es obligatorio.</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="hasta">Hasta</label>
+      <input
+        id="hasta"
+        type="number"
+        formControlName="hasta"
+        inputmode="numeric"
+        step="1"
+        [attr.aria-invalid]="mostrarError('hasta') && formulario.controls.hasta.invalid"
+      />
+      <small class="ayuda">Debe ser mayor que «desde».</small>
+
+      @if (mostrarError('hasta') && formulario.controls.hasta.hasError('required')) {
+        <p class="error">El valor «hasta» es obligatorio.</p>
+      }
+    </div>
+  </div>
+
+  @if (mostrarErrorGrupo() && formulario.hasError('hastaMayor')) {
+    <p class="error error-grupo">Hasta debe ser mayor que desde.</p>
+  }
+
+  <div class="acciones">
+    <p class="resumen">
+      M = {{ M }} · tope = {{ TOPE }} · rango {{ DESDE }}–{{ HASTA }}
+    </p>
+    <button type="submit">Validar solicitud</button>
+  </div>
+
+  @if (exito() && formulario.valid) {
+    <p class="exito">Solicitud válida. Todos los datos cumplen las reglas.</p>
+  }
+</form>

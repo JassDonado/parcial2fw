@@ -1,0 +1,15 @@
+<header class="barra">
+  <a class="marca" routerLink="/parcial2" aria-label="Ir al formulario del parcial 2">
+    <strong>Parcial 2</strong>
+  </a>
+
+  <nav aria-label="Navegación principal">
+    <a routerLink="/parcial2" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">
+      Formulario
+    </a>
+  </nav>
+</header>
+
+<main class="contenido">
+  <router-outlet />
+</main>
