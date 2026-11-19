@@ -1,0 +1,40 @@
+<section class="detalle">
+  <a class="volver" routerLink="/parcial2">← Volver al formulario</a>
+
+  @if (!codigoValido()) {
+    <div class="aviso" role="alert">
+      <span class="etiqueta etiqueta-aviso">T3</span>
+      <h2>Código inválido</h2>
+      <p>
+        «{{ codigo() }}» no cumple el formato de dos letras mayúsculas y tres dígitos. Esta
+        dirección existe, pero el código no es válido.
+      </p>
+    </div>
+  } @else {
+    <span class="etiqueta">Detalle de la solicitud</span>
+    <h2>{{ codigo() }}</h2>
+
+    <dl class="datos">
+      <div>
+        <dt>Código</dt>
+        <dd>{{ codigo() }}</dd>
+      </div>
+      <div>
+        <dt>Cantidad</dt>
+        <dd>{{ cantidadValida() ? cantidad() : '—' }}</dd>
+      </div>
+      <div>
+        <dt>Bloques</dt>
+        <dd>{{ cantidadValida() ? bloques() : '—' }}</dd>
+      </div>
+      <div>
+        <dt>Margen</dt>
+        <dd>{{ cantidadValida() ? margen() : '—' }}</dd>
+      </div>
+    </dl>
+
+    <p class="nota">
+      bloques = cantidad / {{ M }} · margen = {{ TOPE }} − cantidad
+    </p>
+  }
+</section>

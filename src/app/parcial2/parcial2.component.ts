@@ -1,6 +1,7 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs';
 import { CatalogoService } from './catalogo.service';
 import { DESDE, HASTA, M, PATRON_CODIGO, TOPE } from './parametros';
@@ -17,6 +18,7 @@ type CampoNumerico = 'cantidad' | 'desde' | 'hasta';
 export class Parcial2Component {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly catalogo = inject(CatalogoService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly M = M;
@@ -27,8 +29,6 @@ export class Parcial2Component {
 
   /** Se activa al intentar enviar: obliga a mostrar todos los errores a la vez. */
   readonly enviado = signal(false);
-  /** Confirma un envío válido. */
-  readonly exito = signal(false);
 
   readonly formulario = this.fb.group(
     {
@@ -75,14 +75,15 @@ export class Parcial2Component {
   }
 
   enviar(): void {
-    this.exito.set(false);
-
     if (this.formulario.invalid) {
       this.enviado.set(true);
       this.formulario.markAllAsTouched();
       return;
     }
 
-    this.exito.set(true);
+    const { codigo, cantidad } = this.formulario.getRawValue();
+    void this.router.navigate(['/parcial2/detalle', codigo], {
+      queryParams: { cantidad },
+    });
   }
 }
