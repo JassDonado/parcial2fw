@@ -110,3 +110,40 @@
     <p class="exito">Solicitud válida. Todos los datos cumplen las reglas.</p>
   }
 </form>
+
+<section class="tarjeta busqueda" aria-labelledby="titulo-busqueda">
+  <div class="busqueda-encabezado">
+    <div>
+      <h3 id="titulo-busqueda">Catálogo</h3>
+      <p class="ayuda">Se filtra con el último valor emitido por el campo de búsqueda.</p>
+    </div>
+    <span class="contador">{{ listadoFiltrado().length }} resultados</span>
+  </div>
+
+  <div class="campo">
+    <label for="buscar">Buscar</label>
+    <input
+      id="buscar"
+      type="search"
+      [formControl]="buscar"
+      placeholder="Código, nombre o categoría"
+      autocomplete="off"
+    />
+    <div class="medidores" aria-live="polite">
+      <span>Último valor: <strong>{{ ultimoValor() || '—' }}</strong></span>
+      <span>Emisiones: <strong>{{ emisiones() }}</strong></span>
+    </div>
+  </div>
+
+  <ul class="listado">
+    @for (registro of listadoFiltrado(); track registro.codigo) {
+      <li>
+        <span class="codigo">{{ registro.codigo }}</span>
+        <span class="nombre">{{ registro.nombre }}</span>
+        <span class="categoria">{{ registro.categoria }}</span>
+      </li>
+    } @empty {
+      <li class="vacio">Sin resultados para «{{ ultimoValor() }}».</li>
+    }
+  </ul>
+</section>

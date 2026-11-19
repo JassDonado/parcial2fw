@@ -1,5 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs';
+import { CatalogoService } from './catalogo.service';
 import { DESDE, HASTA, M, PATRON_CODIGO, TOPE } from './parametros';
 import { hastaMayorValidator, multiploValidator, rangoValidator } from './validadores';
 
@@ -13,6 +16,8 @@ type CampoNumerico = 'cantidad' | 'desde' | 'hasta';
 })
 export class Parcial2Component {
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly catalogo = inject(CatalogoService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly M = M;
   readonly TOPE = TOPE;
@@ -38,6 +43,24 @@ export class Parcial2Component {
     },
     { validators: hastaMayorValidator },
   );
+
+  /** Campo «buscar»: flujo reactivo con debounce, recorte y descarte de repetidos. */
+  readonly buscar = this.fb.control('');
+  readonly ultimoValor = signal('');
+  readonly emisiones = signal(0);
+  readonly listadoFiltrado = computed(() => this.catalogo.filtrar(this.ultimoValor()));
+
+  constructor() {
+    this.buscar.valueChanges
+      .pipe(
+        debounceTime(300),
+        map((texto) => texto.trim()),
+        distinctUntilChanged(),
+        tap(() => this.emisiones.update((total) => total + 1)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((valor) => this.ultimoValor.set(valor));
+  }
 
   /** Un error se muestra si el campo ya se tocó o se modificó, o si hubo un envío inválido. */
   mostrarError(campo: 'codigo' | CampoNumerico): boolean {

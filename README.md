@@ -1,6 +1,6 @@
 # Parcial 2 · Programación con Frameworks para Web
 
-Avance **R1** del Parcial 2 · Práctico en Angular 22 (standalone, control flow moderno).
+Avances **R1 y R2** del Parcial 2 · Práctico en Angular 22 (standalone, control flow moderno).
 Parámetros del último dígito de la cédula **d = 7**:
 
 | Parámetro | Fórmula | Valor |
@@ -29,6 +29,29 @@ Abrir `http://localhost:4200/parcial2`.
 - `codigo` usa `Validators.required` y el patrón `^[A-Z]{2}\d{3}$`.
 - Cada error aparece bajo su campo cuando este se toca o se modifica; un envío inválido muestra todos los errores a la vez.
 
+## R2 · Búsqueda reactiva
+
+El campo `buscar` se procesa con este flujo de RxJS:
+
+```ts
+this.buscar.valueChanges.pipe(
+  debounceTime(300),
+  map((texto) => texto.trim()),
+  distinctUntilChanged(),
+  tap(() => this.emisiones.update((total) => total + 1)),
+  takeUntilDestroyed(this.destroyRef),
+);
+```
+
+- `debounceTime(300)`: emite solo tras 300 ms sin escribir.
+- `map(trim)`: elimina espacios en los extremos del valor consultado.
+- `distinctUntilChanged()`: descarta valores iguales al emitido inmediatamente antes.
+- `takeUntilDestroyed`: cierra la suscripción al destruir el componente.
+
+Debajo del campo se muestra **«Último valor»** y **«Emisiones: n»**. El catálogo de
+`CatalogoService` se filtra con el último valor emitido y se muestran 0 resultados con
+`@empty`.
+
 ## Estructura
 
 ```
@@ -39,5 +62,6 @@ src/app/
 └── parcial2/
     ├── parametros.ts
     ├── validadores.ts
+    ├── catalogo.service.ts
     └── parcial2.component.ts|html|css
 ```
